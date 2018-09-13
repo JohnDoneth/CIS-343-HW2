@@ -49,7 +49,7 @@ int read_file( char* filename, char **buffer ) {
         return -1;
     }
 
-    // Read in binary mode to make cstdlib ignore newlines, etc.
+    // Read in binary mode to ignore newlines, etc.
     FILE* file = fopen(filename, "rb");
     
     // Failed to open for reading
@@ -88,7 +88,7 @@ int write_file( char* filename, char *buffer, int size) {
 
     int bytes_written = 0;
 
-    // Write in binary so cstdlib ignores newlines, etc.
+    // Write in binary to ignores newlines, etc.
     FILE* file = fopen(filename, "wb");
 
     // The file could not be opened for writing.
