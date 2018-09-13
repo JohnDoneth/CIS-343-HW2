@@ -6,31 +6,34 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h> // for strlen
 
 #include "file_utils.h"
 
-// Reverse a string without allocating a second buffer
+//
+// Reverse a buffer in-place without allocating a second buffer
 // 
 // Source: https://stackoverflow.com/a/5361899
 //
-void reverse(char* str) {
+void reverse(char* buffer, int size) {
       
-    int right = strlen(str) - 1;
+    int right = size-1;
     int left = 0;
     while (left < right) {
-        char c = str[right];
-        str[right] = str[left];
-        str[left] = c;
+        char c = buffer[right];
+        buffer[right] = buffer[left];
+        buffer[left] = c;
         ++left;
         --right;
     }
     
 }
 
-// Usage:
-//      reverse INPUT_FILENAME OUTPUT_FILENAME
 //
+// Reverses the binary contents of a file into a file.
+//
+// Usage:
+//      reverse <input-filename> <output-filename>
+//      
 int main(int argc, char** argv){
 
     if (argc != 3) {
@@ -39,41 +42,40 @@ int main(int argc, char** argv){
         printf("\treverse <input-filename> <output-filename>\n");
     }
     else {
-        /*printf("Args:\n");
-
-        for (int i = 0; i < argc; i++) {
-            printf("Arg %d : '%s'\n", i, argv[i]);
-        }*/
 
         char* input_filename = argv[1];
         char* output_filename = argv[2];
 
+        // Open the file so we can see how big it is
         FILE* input_file = fopen(input_filename, "r");
        
+        // Run our size detect function
         int input_file_size = get_file_size(input_file);
 
+        // Close the file
         fclose(input_file);
-
+        
+        // Allocate a buffer to contain the size of the input file
         char* buffer = (char*)malloc(sizeof(char) * input_file_size);
 
+        // Read the file into the allocated buffer
         int bytes_read = read_file(input_filename, &buffer);
 
         if (bytes_read != -1){
 
-            //printf("Bytes read %d from input file.\n", bytes_read);
-            printf("Input file contents:\n%s\n", buffer);
+            // Reverse the contents of the buffer in-place
+            reverse(buffer, input_file_size);
 
-            reverse(buffer);
-
-            printf("Reversed:\n%s\n", buffer);
-
+            // Write the buffer to the output file
             int bytes_written = write_file(output_filename, buffer, input_file_size);
+           
+            // Handle an error if it occured
             if (bytes_written == -1) {
-                printf("Failed to write to file '%s'.\n", output_filename);
+                fprintf(stderr, "Failed to write to file '%s'.\n", output_filename);
             }
 
         } else {
-            printf("Failed to open file '%s' for reading\n", input_filename);
+            fprintf(stderr, "Failed to open file '%s' for reading\n", input_filename);
         }
 
     }
