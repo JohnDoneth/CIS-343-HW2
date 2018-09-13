@@ -12,6 +12,10 @@
 //
 // Reverse a buffer in-place without allocating a second buffer
 // 
+// The function simply keeps a index to the front of the buffer, and a
+// index to the end and slowly moves each index to the middle of the 
+// buffer, swapping each byte along the way.
+//
 // Source: https://stackoverflow.com/a/5361899
 //
 void reverse(char* buffer, int size) {
@@ -48,11 +52,18 @@ int main(int argc, char** argv){
 
         // Open the file so we can see how big it is
         FILE* input_file = fopen(input_filename, "r");
-       
+
+        if (input_file == NULL){
+            fprintf(stderr, 
+                    "Failed to open %s for reading\n", 
+                    input_filename);
+
+            return -1;
+        }
+
         // Run our size detect function
         int input_file_size = get_file_size(input_file);
 
-        // Close the file
         fclose(input_file);
         
         // Allocate a buffer to contain the size of the input file
@@ -67,17 +78,29 @@ int main(int argc, char** argv){
             reverse(buffer, input_file_size);
 
             // Write the buffer to the output file
-            int bytes_written = write_file(output_filename, buffer, input_file_size);
+            int bytes_written = write_file(
+                    output_filename, 
+                    buffer, 
+                    input_file_size);
            
             // Handle an error if it occured
             if (bytes_written == -1) {
-                fprintf(stderr, "Failed to write to file '%s'.\n", output_filename);
+                fprintf(stderr, 
+                        "Failed to write to file '%s'.\n", 
+                        output_filename);
             }
 
         } else {
-            fprintf(stderr, "Failed to open file '%s' for reading\n", input_filename);
+            fprintf(stderr, 
+                    "Failed to open file '%s' for reading\n", 
+                    input_filename);
         }
+
+        // Free our memory! Goodbye sweet bytes, you served us well.
+        free(buffer);
 
     }
 
+    // Everything worked!
+    return 0;
 }
