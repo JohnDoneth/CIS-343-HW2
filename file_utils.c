@@ -88,7 +88,7 @@ int write_file( char* filename, char *buffer, int size) {
 
     int bytes_written = 0;
 
-    // Write in binary to ignores newlines, etc.
+    // Write in binary to ignore newlines, etc.
     FILE* file = fopen(filename, "wb");
 
     // The file could not be opened for writing.
