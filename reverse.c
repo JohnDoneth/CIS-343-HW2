@@ -55,7 +55,7 @@ int main(int argc, char** argv){
 
         if (input_file == NULL){
             fprintf(stderr, 
-                    "Failed to open %s for reading\n", 
+                    "Failed to open %s for reading.\n", 
                     input_filename);
 
             return -1;
@@ -68,6 +68,10 @@ int main(int argc, char** argv){
         
         // Allocate a buffer to contain the size of the input file
         char* buffer = (char*)malloc(sizeof(char) * input_file_size);
+        if (buffer == NULL){
+            fprintf(stderr, "Failed to allocate %I64d byte(s).\n", sizeof(char) * input_file_size);
+            return -1;
+        }
 
         // Read the file into the allocated buffer
         int bytes_read = read_file(input_filename, &buffer);
@@ -92,7 +96,7 @@ int main(int argc, char** argv){
 
         } else {
             fprintf(stderr, 
-                    "Failed to open file '%s' for reading\n", 
+                    "Failed to open file '%s' for reading.\n", 
                     input_filename);
         }
 
